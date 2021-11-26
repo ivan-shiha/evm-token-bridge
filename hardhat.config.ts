@@ -3,9 +3,10 @@ import * as dotenv from "dotenv";
 import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
-import "@typechain/hardhat";
-import "hardhat-gas-reporter";
-import "solidity-coverage";
+import "hardhat-ethernal";
+// import "@typechain/hardhat";
+// import "hardhat-gas-reporter";
+// import "solidity-coverage";
 
 dotenv.config();
 
@@ -21,7 +22,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
-
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
   networks: {
@@ -30,14 +30,30 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-  },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
+    kovan: {
+      url: process.env.KOVAN_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    ganache: {
+      url: "http://127.0.0.1:7545"
+    },
+    hardhat: {
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+        path: "m/44'/60'/0'/0",
+        initialIndex: 0,
+        count: 5,
+      },
+      mining: {
+        auto: true,
+        // interval: 20000
+      }
+    }
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
-  },
+    apiKey: process.env.ETHERSCAN_API_KEY
+  }
 };
 
 export default config;
