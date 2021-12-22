@@ -2,11 +2,12 @@ import * as dotenv from "dotenv";
 
 import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
+import '@nomiclabs/hardhat-ethers';
 import "@nomiclabs/hardhat-waffle";
-import "hardhat-ethernal";
-// import "@typechain/hardhat";
-// import "hardhat-gas-reporter";
-// import "solidity-coverage";
+import "@typechain/hardhat";
+import "solidity-coverage";
+import "hardhat-gas-reporter";
+import "hardhat-deploy";
 
 dotenv.config();
 
@@ -24,21 +25,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
+  defaultNetwork: "hardhat",
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    kovan: {
-      url: process.env.KOVAN_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    ganache: {
-      url: "http://127.0.0.1:7545"
-    },
     hardhat: {
+      chainId: 31337,
       accounts: {
         mnemonic: "test test test test test test test test test test test junk",
         path: "m/44'/60'/0'/0",
@@ -49,10 +39,27 @@ const config: HardhatUserConfig = {
         auto: true,
         // interval: 20000
       }
+    },
+    ganache: {
+      url: "http://127.0.0.1:7545"
+    },
+    ropsten: {
+      url: process.env.ROPSTEN_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    kovan: {
+      url: process.env.KOVAN_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     }
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY
+  },
+  gasReporter: {
+    enabled: process.env.REPORT_GAS !== undefined,
+    currency: "USD",
   }
 };
 
